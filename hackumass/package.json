@@ -1,7 +1,7 @@
 {
   "name": "spaghetti-sniffer",
-  "displayName": "hackumass",
-  "description": "",
+  "displayName": "Spaghetti Sniffer",
+  "description": "Detects Python code smells and roasts you about them using GPT-4o.",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.95.0"
@@ -18,7 +18,7 @@
     "commands": [
       {
         "command": "hackumass.helloWorld",
-        "title": "Hello World"
+        "title": "Spaghetti Sniffer: Analyze File"
       }
     ]
   },
