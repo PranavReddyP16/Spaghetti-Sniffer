@@ -125,10 +125,12 @@ The result: instead of `"function exceeds 50 lines"`, you get something like `"D
 # Install Python dependencies
 pip install -r requirements.txt
 
-# Set your OpenAI API key
-echo "OPENAI_API_KEY=sk-..." > .env
+# Configure your OpenAI API key
+cp .env.example .env
+# Edit .env and set OPENAI_API_KEY=sk-...
 
-# Start the Flask server
+# Start the Flask server (run from backend/)
+cd backend
 python server.py
 # Listening on http://0.0.0.0:5000
 ```
@@ -136,11 +138,12 @@ python server.py
 ### 2. VS Code Extension
 
 ```bash
-cd hackumass
+cd extension
 npm install
 
 # Option A: dev mode — press F5 in VS Code to launch Extension Development Host
-# Option B: install the packaged extension directly
+# Option B: build and install the packaged extension
+npx vsce package
 code --install-extension spaghetti-sniffer-0.0.1.vsix
 ```
 
@@ -161,32 +164,40 @@ The extension reads the entire workspace on each save to support cross-file anal
 ## Project Structure
 
 ```
-├── server.py                    # Flask API — orchestrates all analyzers
-├── lang.py                      # LLM integration — GPT-4o via LangChain
-│
-├── badexception.py              # Bad exception handling detector
-├── longfunctions.py             # Long function detector
-├── unusedimport.py              # Unused imports & variables detector
-├── bad_context_management.py    # Unsafe file open detector
-├── dead_code.py                 # Dead code detector
-├── cyclomatic_complexity.py     # Cyclomatic complexity analyzer
-├── hardcoded_values.py          # Magic value detector
-├── deep_nesting.py              # Deep nesting detector
-├── too_many_params.py           # Parameter count checker
-├── bad_variable_name.py         # Variable naming checker
-├── bad_variable_usage.py        # Def-use chain analyzer
-├── comparing_against_bool_literals.py
-├── print_statements.py
-├── unnecessary_return_checks.py
-├── multiple_files_duplicate_code.py  # Cross-file duplicate detection
-├── cyclic_imports.py            # Cyclic import graph analyzer (networkx)
-│
+├── README.md
 ├── requirements.txt
-├── test_code/                   # Sample Python files with intentional smells
+├── .env.example
 │
-└── hackumass/                   # VS Code extension
-    ├── extension.js             # Extension entry point
-    └── package.json
+├── backend/
+│   ├── server.py                        # Flask API — orchestrates all analyzers
+│   ├── lang.py                          # LLM integration — GPT-4o via LangChain
+│   └── analyzers/
+│       ├── __init__.py
+│       ├── bad_exception_handler.py     # Bare except / catch-all detection
+│       ├── long_functions.py            # Function length (>50 lines)
+│       ├── unused_imports.py            # Unused imports & variables
+│       ├── context_management.py        # Unsafe file opens
+│       ├── dead_code.py                 # Unreachable statements
+│       ├── cyclomatic_complexity.py     # Branch complexity (threshold: 5)
+│       ├── hardcoded_values.py          # Magic number/string detection
+│       ├── deep_nesting.py              # Recursive nesting depth
+│       ├── too_many_params.py           # Function arity check
+│       ├── variable_names.py            # Non-descriptive variable names
+│       ├── variable_usage.py            # Assigned-before-use analysis
+│       ├── bool_comparisons.py          # == True / == False patterns
+│       ├── print_statements.py          # Debug print() detection
+│       ├── unnecessary_return_checks.py # Redundant return patterns
+│       ├── cross_file_duplicates.py     # Multi-file AST similarity hashing
+│       └── cyclic_imports.py            # Import graph cycle detection (networkx)
+│
+├── extension/                           # VS Code extension
+│   ├── extension.js                     # Extension entry point
+│   ├── package.json
+│   └── test/
+│       └── extension.test.js
+│
+└── tests/
+    └── fixtures/                        # Sample Python files with intentional smells
 ```
 
 ---
